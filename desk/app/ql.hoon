@@ -1,4 +1,5 @@
 ::  QL: Quorum Listener
+::
 /-  *minaera, feed, service, boards
 /+  bout, verb, dbug, default-agent, *sss, n=nectar, qu=quorum
 |%
@@ -142,17 +143,9 @@
   ::
   ==
 ::
-++  on-watch
-  |=  =path
-  ^-  (quip card _this)
-  `this
-::
+++  on-watch  |=(=path `this)
 ++  on-leave  |=(=path `this)
-::
-++  on-arvo
-  |=  [=wire sign=sign-arvo]
-  ^-  (quip card _this)
-  `this
+++  on-arvo   |=([=wire sign=sign-arvo] `this)
 ::
 ++  on-peek   on-peek:def
 ++  on-fail   on-fail:def
