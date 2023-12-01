@@ -1,23 +1,21 @@
 ::  QL: Quorum Listener
 /-  *minaera, feed, service, boards
-/+  verb, dbug, default-agent, *sss, n=nectar, qu=quorum
+/+  bout, verb, dbug, default-agent, *sss, n=nectar, qu=quorum
 |%
-::
-+$  versioned-state  $%(state-0)
-::
 +$  edge  [from=@p to=@p val=term]
 +$  state-0  [%0 seen=(map [@uw @p] edge)]
++$  versioned-state
+  $%  state-0
+  ==
 ::
 +$  card  card:agent:gall
-::
-::
-::  boilerplate
-::
 --
+::
 =/  pub-feed  (mk-pubs feed ,[%feed %minaera @ @ ~])
 =/  sub-boards  (mk-subs boards ,[%quorum %updates @ @ ~])
 ::
 %+  verb  &
+%-  agent:bout
 %-  agent:dbug
 =|  state=state-0
 ::
@@ -30,32 +28,13 @@
                    (du pub-feed bowl -:!>(*result:du))
     da-boards  =/  da  (da boards ,[%quorum %updates @ @ ~])
                    (da sub-boards bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
-++  on-fail
-  ~>  %bout.[0 '%ql +on-fail']
-  on-fail:def
 ::
-++  on-arvo
-  |=  [=wire sign=sign-arvo]
-  ^-  (quip card _this)
-  `this
+++  on-init   on-init:def
 ::
-++  on-leave
-  ~>  %bout.[0 '%ql +on-leave']
-  |=  =path
-  `this
-::
-++  on-init
-  ~>  %bout.[0 '%ql +on-init']
-  on-init:def
-::
-++  on-save
-  ^-  vase
-  ~>  %bout.[0 '%ql +on-save']
-  !>([state pub-feed sub-boards])
+++  on-save   !>([state pub-feed sub-boards])
 ::
 ++  on-load
   |=  =vase
-  ~>  %bout.[0 '%ql +on-load']
   ^-  (quip card _this)
   =/  old  !<([state-0 =_pub-feed =_sub-boards] vase)
   :-  ~
@@ -67,7 +46,6 @@
 ::
 ++  on-poke
   |=  [=mark =vase]
-  ~>  %bout.[0 '%ql +on-poke']
   ^-  (quip card _this)
   ?+    mark  !!
       %surf-boards
@@ -140,13 +118,8 @@
     ==
   ==
 ::
-++  on-peek
-  ~>  %bout.[0 '%ql +on-peek']
-  on-peek:def
-::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
-  ~>  %bout.[0 '%ql +on-agent']
   ^-  (quip card _this)
   ?.  =(%poke-ack -.sign)
     ~&  >  beer+'bad poke'  `this
@@ -171,7 +144,16 @@
 ::
 ++  on-watch
   |=  =path
-  ~>  %bout.[0 '%ql +on-watch']
   ^-  (quip card _this)
   `this
+::
+++  on-leave  |=(=path `this)
+::
+++  on-arvo
+  |=  [=wire sign=sign-arvo]
+  ^-  (quip card _this)
+  `this
+::
+++  on-peek   on-peek:def
+++  on-fail   on-fail:def
 --

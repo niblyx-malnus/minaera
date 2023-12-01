@@ -1,6 +1,4 @@
-::
 ::  %bussin %frfr
-::
 ::  
 ::  Reputation SERVICE: Derives reputation score from %beer and %alfie data
 ::  
@@ -28,11 +26,8 @@
 ::  .^((set @p) %gx /(scot %p our)/pals/(scot %da now)/mutuals/noun)
 ::
 /-  *minaera, feed, service
-/+  verb, dbug, default-agent, *sss, n=nectar, *mip
+/+  bout, verb, dbug, default-agent, *sss, n=nectar, *mip
 |%
-::
-+$  versioned-state  $%(state-0)
-::
 +$  score
   $:  score=@rs 
       beer=[from=(unit @p) weight=@rs]
@@ -44,6 +39,9 @@
       neighbors=(set @p)
       scores=(mip @p @ score)
   ==
++$  versioned-state
+  $%  state-0
+  ==
 ::
 +$  frfr-action
   $%  [%compute =ship]
@@ -51,9 +49,6 @@
       [%del-edge =ship]
       [%placeholder ~]
   ==
-::
-::
-::  boilerplate
 ::
 +$  card  card:agent:gall
 ++  info-card
@@ -145,6 +140,7 @@ my peers attests that the ship is definitely fake (%0) the confidence goes to 0.
 =/  pub-service  (mk-pubs service ,[%service *])
 ::
 %+  verb  &
+%-  agent:bout
 %-  agent:dbug
 =|  state=state-0
 ::
@@ -161,22 +157,9 @@ my peers attests that the ship is definitely fake (%0) the confidence goes to 0.
                    (da sub-service bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
     du-service  =/  du  (du service ,[%service *])
                    (du pub-service bowl -:!>(*result:du))
-++  on-fail
-  ~>  %bout.[0 '%frfr +on-fail']
-  on-fail:def
-::
-++  on-leave
-  ~>  %bout.[0 '%frfr +on-leave']
-  on-leave:def
-::
-++  on-arvo
-  |=  [=wire sign=sign-arvo]
-  ^-  (quip card _this)
-  `this
 ::
 ++  on-init
   ^-  (quip card _this)
-  ~>  %bout.[0 '%frfr +on-init']
   =.  neighbors.state  ?.  .^(? %gu /=pals=/$)
                          *(set @p)
                        .^((set @p) %gx /=pals=/mutuals/noun)
@@ -188,14 +171,10 @@ my peers attests that the ship is definitely fake (%0) the confidence goes to 0.
   |=  a=@p
   (pass-surf our.bowl a)
 ::
-++  on-save
-  ^-  vase
-  ~>  %bout.[0 '%frfr +on-save']
-  !>([state sub-feed sub-service pub-service])
+++  on-save   !>([state sub-feed sub-service pub-service])
 ::
 ++  on-load
   |=  =vase
-  ~>  %bout.[0 '%frfr +on-load']
   ^-  (quip card _this)
   =/  old  !<([state-0 =_sub-feed =_sub-service =_pub-service] vase)
   :-  ~
@@ -208,7 +187,6 @@ my peers attests that the ship is definitely fake (%0) the confidence goes to 0.
 ::
 ++  on-poke
   |=  [=mark =vase]
-  ~>  %bout.[0 '%frfr +on-poke']
   ^-  (quip card _this)
   ?+    mark  !!
     ::
@@ -293,7 +271,6 @@ my peers attests that the ship is definitely fake (%0) the confidence goes to 0.
 ::
 ++  on-peek
   |=  =path
-  ~>  %bout.[0 '%frfr +on-peek']
   ^-  (unit (unit cage))
   ?+    path  `~
       [%x %score @ ~]
@@ -312,7 +289,6 @@ my peers attests that the ship is definitely fake (%0) the confidence goes to 0.
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
-  ~>  %bout.[0 '%frfr +on-agent']
   ^-  (quip card _this)
   ?.  =(%poke-ack -.sign)
     ~&  >  beer+'bad poke'  `this
@@ -341,12 +317,13 @@ my peers attests that the ship is definitely fake (%0) the confidence goes to 0.
     [cards this]
   ==
 ::
-++  on-watch
-  |=  =path
-  ~>  %bout.[0 '%frfr +on-watch']
-  ^-  (quip card _this)
-  `this
+++  on-watch  |=(=path `this)
+++  on-arvo   |=([=wire sign=sign-arvo] `this)
+::
+++  on-leave  on-leave:def
+++  on-fail   on-fail:def
 --
+::
 |_  =bowl:gall
 ++  compute-weight
   |=  [ship=@p neighbors=(set @p)]

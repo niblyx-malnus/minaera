@@ -1,37 +1,31 @@
-::
 ::  A local feed ingestion engine
 ::
 ::  Ingests local groups events, sanitizes them, and submits them to %minaera graph
 ::
-::
 ::  +on-agent arm listens for reacts to posts
 ::
 /-  *minaera, chat
-/+  verb, dbug, default-agent
+/+  bout, verb, dbug, default-agent
 |%
-::
 ++  event-version  0
-::
-+$  versioned-state  $%(state-0)
-::
 +$  state-0  %0
++$  versioned-state
+  $%  state-0
+  ==
 ::
 ++  chat-subscribe-card
   |=  =ship
   [%pass /chat/updates %agent [ship %chat] %watch /ui]
 ::
-::
 ++  minaera-init-card
 |=  =ship
 [%pass /minaera/action %agent [ship %minaera] %poke %aera-action !>([%init-table %groups %alfie])]
-::
-::
-::  boilerplate
 ::
 +$  card  card:agent:gall
 --
 ::
 %+  verb  &
+%-  agent:bout
 %-  agent:dbug
 =|  state=state-0
 ::
@@ -40,52 +34,22 @@
 |_  =bowl:gall
 +*  this  .
     def  ~(. (default-agent this %|) bowl)
-++  on-fail
-  ~>  %bout.[0 '%alfie +on-fail']
-  on-fail:def
-::
-++  on-leave
-  ~>  %bout.[0 '%alfie +on-leave']
-  on-leave:def
-::
-++  on-arvo
-  |=  [=wire sign=sign-arvo]
-  ^-  (quip card _this)
-  `this
 ::
 ++  on-init
   ^-  (quip card _this)
-  ~>  %bout.[0 '%alfie +on-init']
   :_  this
   ~[(chat-subscribe-card our.bowl) (minaera-init-card our.bowl)]
 ::
-++  on-save
-  ^-  vase
-  ~>  %bout.[0 '%alfie +on-save']
-  !>(state)
+++  on-save   !>(state)
 ::
 ++  on-load
   |=  old=vase
-  ~>  %bout.[0 '%alfie +on-load']
   ^-  (quip card _this)
-  =.  state  !<  state-0  old
+  =.  state  !<(state-0 old)
   `this
-::
-++  on-poke
-  |=  =cage
-  ~>  %bout.[0 '%alfie +on-poke']
-  ^-  (quip card _this)
-  `this
-::
-++  on-peek
-  |=  =path
-  ~>  %bout.[0 '%alfie +on-peek']
-  ^-  (unit (unit cage))
-  ~
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
-  ~>  %bout.[0 '%alfie +on-agent']
   ^-  (quip card _this)
   ?+  wire  (on-agent:def wire sign)
       [%chat %updates ~]
@@ -144,9 +108,11 @@
     ==
   ==
 ::
-++  on-watch
-  |=  =path
-  ~>  %bout.[0 '%alfie +on-watch']
-  ^-  (quip card _this)
-  `this
+++  on-poke   |=(=cage `this)
+++  on-peek   |=(=path ~)
+++  on-watch  |=(=path `this)
+++  on-arvo   |=([=wire sign=sign-arvo] `this)
+::
+++  on-leave  on-leave:def
+++  on-fail   on-fail:def
 --
